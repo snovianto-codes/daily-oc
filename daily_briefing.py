@@ -86,6 +86,14 @@ def rain_warning(text):
 
 
 def build_weather_block(f24, f2):
+    try:
+        return _build_weather_block(f24, f2)
+    except Exception as e:
+        print(f"[Weather block error] {e}")
+        return f"🌤 *WEATHER — {AREA}*\nUnavailable"
+
+
+def _build_weather_block(f24, f2):
     lines = [f"🌤 *WEATHER — {AREA}*"]
     if f2:
         cond = f2.get("forecast", "N/A")
@@ -344,6 +352,28 @@ def call_claude(prompt, max_tokens=500, system=None):
 
 
 # ─────────────────────────────────────────
+# BRIEFING CONTEXT
+# ─────────────────────────────────────────
+
+def save_briefing_context(date, articles, gold_data, crypto_data):
+    context = {
+        "date":           date,
+        "headlines":      articles,
+        "gold_usd":       gold_data.get("price_usd"),
+        "gold_sgd":       gold_data.get("price_sgd"),
+        "usd_sgd":        gold_data.get("usd_sgd"),
+        "gold_change_pct": gold_data.get("change_pct"),
+        "btc_usd":        crypto_data.get("btc_usd"),
+        "eth_usd":        crypto_data.get("eth_usd"),
+        "btc_change_pct": crypto_data.get("btc_change_pct"),
+        "eth_change_pct": crypto_data.get("eth_change_pct"),
+    }
+    with open(CONTEXT_FILE, "w") as f:
+        json.dump(context, f, indent=2)
+    print(f"✅ Briefing context saved to {CONTEXT_FILE}")
+
+
+# ─────────────────────────────────────────
 # TELEGRAM
 # ─────────────────────────────────────────
 
@@ -379,8 +409,13 @@ def main():
     gold_block = build_gold_block()
 
     print("Fetching crypto...")
-    from crypto_alert import get_crypto_snapshot, load_last_prices
-    crypto_block = get_crypto_snapshot()
+    try:
+        from crypto_alert import get_crypto_snapshot, load_last_prices
+        crypto_block = get_crypto_snapshot()
+    except Exception as e:
+        print(f"[Crypto import error] {e}")
+        crypto_block = "💎 *CRYPTO*\nUnavailable"
+        load_last_prices = lambda: {}
 
     print("Fetching news...")
     articles     = fetch_news()
