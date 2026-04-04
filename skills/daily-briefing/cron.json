@@ -1,0 +1,12 @@
+{
+  "jobs": [
+    {
+      "name": "daily-briefing",
+      "description": "Morning briefing with weather, news sent to Telegram",
+      "schedule": "30 7 * * *",
+      "timezone": "Asia/Singapore",
+      "command": "cd /Users/novianto/Documents/Python/OpenClaw/Daily-OC && python daily_briefing.py",
+      "enabled": true
+    }
+  ]
+}

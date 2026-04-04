@@ -1,0 +1,23 @@
+# Secrets
+.env
+token.pickle
+credentials.json
+
+# Price history
+.gold_last_price.json
+.crypto_last_price.json
+
+# Briefing context
+briefing_context.json
+
+# Logs
+briefing.log
+briefing_error.log
+
+# Mac
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
